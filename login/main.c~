@@ -1,0 +1,274 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<time.h>
+#include <ctype.h>
+
+struct complaints{
+	char details[500];
+	int complaintNo;
+	char solution[500];
+	int phoneNo;
+	struct complaints *link;
+};
+typedef struct complaints * node;
+
+
+//function definations
+int newClient();
+int existingClient();
+int devloperLogin();
+void userComplain();
+void existing_status();
+int complaintNoGenerator();
+void developer_update();
+
+int main()
+{
+	//variable Declarations
+	char ch[10],choiceClient[10];
+	int clientGenerated=0,loginPassed=0,devloperLoged=0;
+        int choiceUser=0,clientChoice=0,user_complain;
+	//Menu Driven
+	while(1){
+
+		printf("\nEnter '1' for Client login and '2' for Service Provider login.Enter '3' to  Exit\n");
+		scanf("%d",&choiceUser);
+			switch(choiceUser)
+			{
+				case 1:
+				//Client Login choice begins
+
+					printf("\nEnter '1' for new login and '2' for existing login\n");
+					scanf("%d",&clientChoice);
+					switch(clientChoice)
+					{
+						case 1:
+							clientGenerated=newClient();
+							if(clientGenerated==1)
+							{
+								printf("\nNew Record Generated\n");
+								userComplain();
+
+							}
+							else
+							{
+								printf("\nSome Error occured.Login not created.Please try again\n");
+							}
+							break;
+						case 2:
+
+							loginPassed=existingClient();
+							char userCom[20];
+							int chh;
+							if(loginPassed==1){
+								printf("\nLogin Successful\n");
+								printf("\nEnter '1' if you want to Register complain or '2' to Check status of previous complaints\n");
+								scanf("%d",&chh);
+								if(chh==1){
+									userComplain();
+								}
+								else if(chh==2){
+										existing_status();
+								}
+								else{
+                                    printf("\nWrong Choice.\n");
+								}
+							}
+							else {
+								printf("\nLogin Failed.Try Again\n");
+							}
+							break;
+						default:
+							printf("\nWrong Choice\n");
+					}
+					break;
+					//Client login choice ends
+					//Devlopers login choice begins
+						case 2:
+
+								devloperLoged=devloperLogin();
+								if(devloperLoged==1){
+									printf("\nLogin Successful\n");
+									printf("\nUpdate the status of the Complaints");
+                                        developer_update();
+								}
+								else{
+									printf("\nLogin Failed.Try Again\n");
+								}
+							break;
+					//Devlopers login choice ends
+						case 3:
+							exit(0);
+						default:
+							printf("\nWrong Choice\n");
+		}//end of switch
+	}//end of while
+	return 0;
+}//end of main
+int newClient()
+{
+	FILE *fp,*fp1;
+	//error checking
+	if((fp=fopen("loginRecordsClients.txt","r"))==NULL){
+		return 0;
+	}
+	char tempName[25],tempUser[25],tempPass[25];
+	fp1=fopen("loginRecordsClients.txt","r");
+
+	//variable declarations
+	fp=fopen("loginRecordsClients.txt","a");
+	char name[50],password[20],username[20];
+	//int dd,mm,yyyy;
+	//taking input
+	printf("\nEnter your name\n");
+	scanf("%s",name);
+	//printf("\nEnter todays data (dd mm yyyy) format\n");
+	//scanf("%d%d%d",&dd,&mm,&yyyy);
+	printf("\nEnter your username\n");
+	scanf("%s",username);
+	printf("\nEnter your password(Min: 8 characters)\n");
+	scanf("%s",password);
+	while(fscanf(fp1,"%s%s%s",tempName,tempUser,tempPass)){
+        if(strcmp(tempName,name)==0&&strcmp(tempUser,username)==0){
+            printf("\nId with similar Name and Username already available.");
+            return 0;
+        }
+
+	}
+	//process
+	fprintf(fp,"%s\t%s\t%s\n",name,username,password);
+	fclose(fp);
+	return 1;
+}
+
+int existingClient(){
+	FILE *fp;
+	//error checking
+	if((fp=fopen("loginRecordsClients.txt","r"))==NULL){
+		return 0;
+	}
+	//variable deslarations
+	char name[50],password[20],username[20];
+	//int dd,mm,yyyy;
+	char passwordEntered[20],nameEntered[50];
+	printf("\nEnter your Username\n");
+	scanf("%s",nameEntered);
+	printf("\nEnter your Password\n");
+	scanf("%s",passwordEntered);
+	fp=fopen("loginRecordsClients.txt","r");
+	while((fscanf(fp,"%s%s%s",name,username,password))!=EOF){
+	if(strcmp(username,nameEntered)==0 && strcmp(password,passwordEntered)==0){
+		return 1;
+	}
+	}
+	return 0;
+}
+int devloperLogin()
+{
+	FILE *fp;
+	//error checking
+	if((fp=fopen("loginRecordsDevloper.txt","r"))==NULL){
+		return 0;
+	}
+	//variable declaration
+	char name[50],password[20],username[20];
+	char passwordEntered[20],nameEntered[50];
+	printf("\nEnter your Username\n");
+	scanf("%s",nameEntered);
+	printf("\nEnter your Password\n");
+	scanf("%s",passwordEntered);
+	fp=fopen("loginRecordsDevloper.txt","r");
+	while((fscanf(fp,"%s%s%s",name,username,password))!=EOF){
+	if(strcmp(username,nameEntered)==0 && strcmp(password,passwordEntered)==0){
+		return 1;
+	}
+	}
+}
+void userComplain()
+{
+    FILE *fp;
+    time_t seconds;
+    int second,min,hr;
+    int user_complain;
+    char details[100];
+    fp=fopen("user_complain.txt","a");
+    printf("\n=====================================");
+    printf("\nWELCOME TO THE COMPLAIN DESK");
+    printf("\n\nEnter Your complain :\n");
+    //scanf("%[s",details);
+    fgets(details,100,stdin);
+    int comNo=complaintNoGenerator();
+    // time function
+    time_t mytime;
+    mytime=time(NULL);
+    printf("\nTime of Complaint:");
+    printf(ctime(&mytime));
+    fprintf(fp,"%d\t%s\n",comNo,details);
+    printf("\nYour Complaint Number is %d",comNo);
+    user_complain=1;
+    fclose(fp);
+    if(user_complain==1)
+    {
+        printf("\nWe are SORRY for your inconvenience.");
+        printf("\nIt will be solved AS SOON AS possible.");
+        printf("\n=======================================");
+    }
+ }
+void existing_status()
+{
+    FILE *fp;
+    int comNo;
+    printf("\nEnter your complaint No:");
+    scanf("%d",&comNo);
+    char tempdetails[500],tempSol[500];
+    int tempComNo,tempPhone;
+    fp=fopen("updated_complain.txt","r");
+    while(fscanf(fp,"%d%s%s%d",&tempComNo,tempdetails,tempSol,&tempPhone)!=EOF){
+            if(comNo==tempComNo){
+                    printf("\nYour Complaint was:%s",tempdetails);
+                    printf("\nSolution is:%s",tempSol);
+                    printf("\nFor any query contact:%d",tempPhone);
+                    return;
+            }
+            printf("\nComplaint Number Not found.\n");
+
+    }
+}
+void developer_update()
+{
+    char read[500];
+    node temp=(node)malloc(sizeof (struct complaints));
+    FILE *fp,*fp1;
+    int compNo;
+    char solution[500];
+    fp=fopen("user_complain.txt","r");
+    fp1=fopen("updated_complain.txt","a");
+    while(fscanf(fp,"%d%s",&compNo,read)!=EOF)
+    {
+        strcpy(temp->details,read);
+        temp->complaintNo=compNo;
+        printf("\nEnter the solution for this Problem:");
+        printf("\nProblem: %s",read);
+        scanf("%s",temp->solution);
+        printf("\nEnter the phone number to contact");
+        scanf("%d",&temp->phoneNo);
+        temp->link=NULL;
+        fprintf(fp1,"%d\t%s\t%s\t%d\n",temp->complaintNo,temp->details,temp->solution,temp->phoneNo);
+    }
+    fclose(fp);
+    fclose(fp1);
+    printf("\n*****************************");
+}
+int complaintNoGenerator(){
+	FILE *fp;
+	int comNo;
+	fp=fopen("complaintNo.txt","r");
+	fscanf(fp,"%d",&comNo);
+	fclose(fp);
+	++comNo;
+	fopen("complaintNo.txt","w");
+	fprintf(fp,"%d",comNo);
+	fclose(fp);
+	return (comNo);
+}

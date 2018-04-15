@@ -1,0 +1,30 @@
+# depslib dependency file v1.0
+1511329123 source:e:\ashish\project\login\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+
+1511329123 
+
+1511358536 source:/home/ak-47/Desktop/login/main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<ctype.h>
+
+1511425596 source:d:\login\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<ctype.h>
+
+1511422960 source:c:\users\anuj kumar\desktop\login\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<ctype.h>
+
